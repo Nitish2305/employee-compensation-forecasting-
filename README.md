@@ -175,3 +175,134 @@ View powerful visual insights
 
 
 Feel free to reach out via GitHub issues or my profile if you’d like to discuss this project!
+
+
+
+
+notebooks/employee_forecasting.ipynb
+
+# 🧠 Employee Compensation Forecasting - Google Colab Notebook
+
+# 📌 Import Required Libraries
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# 📂 Step 1: Load Employee Data
+df = pd.read_csv('sample_data/employee_data.csv')
+
+# ✅ Step 2: Filter Active Employees
+active_df = df[df['Active?'] == 'Yes']
+
+# 🔍 Step 3: Filter by Role and Location (Customizable)
+role_filter = 'Developer'
+location_filter = 'Bangalore'
+filtered_df = active_df[
+    (active_df['Role'] == role_filter) &
+    (active_df['Location'] == location_filter)
+]
+
+# 📊 Step 4: Average Compensation by Role
+avg_comp = active_df.groupby('Role')['Current Comp (INR)'].mean()
+avg_comp.plot(kind='bar', title='Average Compensation by Role')
+plt.ylabel('Average Compensation (INR)')
+plt.show()
+
+# 📈 Step 5: Group by Experience Ranges
+bins = [0, 1, 2, 5, 10, 20, float('inf')]
+labels = ['0–1 yrs', '1–2 yrs', '2–5 yrs', '5–10 yrs', '10–20 yrs', '20+ yrs']
+active_df['Experience Group'] = pd.cut(active_df['Years of Experience'], bins=bins, labels=labels, right=False)
+grouped_exp = active_df.groupby(['Experience Group', 'Role']).size().unstack().fillna(0)
+grouped_exp.plot(kind='bar', stacked=False, title='Employees by Experience Group and Role')
+plt.ylabel('Count of Employees')
+plt.show()
+
+# 💰 Step 6: Simulate Global Compensation Increment
+increment_percent = 10  # You can modify this value
+df['Updated Comp (INR)'] = df['Current Comp (INR)'] * (1 + increment_percent / 100)
+
+# 🔄 Step 7: Visualize Before vs After Compensation
+sample_chart = df[['Name', 'Current Comp (INR)', 'Updated Comp (INR)']].head(10)
+sample_chart.set_index('Name').plot(kind='bar', title='Compensation Before vs After Increment')
+plt.ylabel('Compensation (INR)')
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
+
+# 📤 Step 8: Export Filtered Data
+filtered_output = df[['Name', 'Role', 'Location', 'Years of Experience', 'Active?', 'Updated Comp (INR)']]
+filtered_output.to_csv('data/filtered_employees.csv', index=False)
+print("✅ Exported: data/filtered_employees.csv")
+
+
+streamlit_app.py
+
+# 📊 Employee Compensation Streamlit App
+
+import streamlit as st
+import pandas as pd
+import matplotlib.pyplot as plt
+
+st.title("💼 Employee Compensation Forecasting")
+
+# 📁 Upload CSV File
+uploaded_file = st.file_uploader("📤 Upload Employee CSV", type="csv")
+if uploaded_file:
+    df = pd.read_csv(uploaded_file)
+    st.write("📄 Raw Data", df.head())
+
+    # ✅ Filter Active Employees
+    active_df = df[df['Active?'] == 'Yes']
+    
+    # 📊 Average Compensation by Role
+    avg_comp = active_df.groupby('Role')['Current Comp (INR)'].mean()
+    st.subheader("📊 Average Compensation by Role")
+    st.bar_chart(avg_comp)
+
+    # 💰 Global Increment Slider
+    increment = st.slider("💡 Select Global Increment (%)", 0, 100, 10)
+    df['Updated Comp (INR)'] = df['Current Comp (INR)'] * (1 + increment / 100)
+
+    # 🧾 Show Updated Data
+    st.subheader("💰 Updated Compensation Preview")
+    st.write(df[['Name', 'Current Comp (INR)', 'Updated Comp (INR)']])
+
+    # 📥 Download Updated CSV
+    st.download_button("⬇️ Download Updated CSV", df.to_csv(index=False), file_name="updated_employees.csv")
+
+
+ sql/table_creation.sql
+Create Employees Table
+
+-- 🗃️ Create Employees Table
+CREATE TABLE Employees (
+    Name TEXT,
+    Role TEXT,
+    Location TEXT,
+    Experience INTEGER,
+    Status TEXT,
+    Compensation INTEGER,
+    LastWorkingDay TEXT
+);
+
+
+sql/stored_procedures.sql
+Simulated SQL Procedures and Queries
+-- ✅ Filter Active Employees
+SELECT * FROM Employees WHERE Status = 'Yes';
+
+-- 📊 Calculate Average Compensation by Role
+SELECT Role, AVG(Compensation) AS AvgComp FROM Employees GROUP BY Role;
+
+-- 📈 Group Employees by Experience Range
+SELECT 
+    CASE 
+        WHEN Experience BETWEEN 0 AND 1 THEN '0–1 yrs'
+        WHEN Experience BETWEEN 2 AND 5 THEN '2–5 yrs'
+        WHEN Experience BETWEEN 6 AND 10 THEN '5–10 yrs'
+        ELSE '10+ yrs'
+    END AS ExperienceGroup,
+    COUNT(*) AS EmployeeCount
+FROM Employees
+GROUP BY ExperienceGroup;
+
+
