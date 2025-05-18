@@ -58,21 +58,21 @@ This project is developed in **Google Colab** for ease of collaboration, analysi
 
 
 ## 🗂 Project Structure
-employee-compensation-forecasting/
+employee-compensation-forecasting
 │
-├── data/
+├── data
 │ └── filtered_employees.csv # Output CSV after filtering/increment
 │
-├── notebooks/
+├── notebooks
 │ └── employee_forecasting.ipynb # Main notebook (Colab-based)
 │
-├── sql/
+├── sql
 │ ├── table_creation.sql # Schema for Employees table
 │ └── stored_procedures.sql # SQL logic for filtering, grouping
 │
 ├── streamlit_app.py # Optional Streamlit app for UI
 │
-├── sample_data/
+├── sample_data
 │ └── employee_data.csv # Sample employee dataset
 │
 └── README.md # This file
