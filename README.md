@@ -49,7 +49,7 @@ This project is developed in **Google Colab** for ease of collaboration, analysi
 |-------------------|-------------------------------------------|
 | Python (Pandas)   | Data analysis and transformation          |
 | SQLite            | Lightweight relational database           |
-| Google Colab      | Cloud-based Jupyter Notebook              |
+| Google Colab      | Cloud-based         Notebook              |
 | Matplotlib        | Data visualizations                       |
 | Seaborn           | Enhanced plotting visuals                 |
 | Streamlit         | Interactive UI dashboard                  |
